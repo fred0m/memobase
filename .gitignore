@@ -321,4 +321,22 @@ dist
 
 # act
 .actrc
-event.json
+event.json# Forgejo sync safety (generated)
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+dist/
+build/
+.DS_Store
+*.log
+*.pid
+*.env
+.pytest_cache/
+.benchmarks/
+data/
+config.json
+.inbox_state
+inbox/
+outbox/
+processed/

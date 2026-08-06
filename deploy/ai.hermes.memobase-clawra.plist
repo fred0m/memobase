@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>ai.hermes.memobase-clawra</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/mac/hotProject/Hermes/memobase/src/mcp/.venv/bin/python</string>
+        <string>/Users/mac/hotProject/Hermes/memobase/src/mcp/src/clawra_main.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/mac/hotProject/Hermes/memobase/src/mcp/src</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>TRANSPORT</key>
+        <string>streamable-http</string>
+        <key>PORT</key>
+        <string>8051</string>
+        <key>HOST</key>
+        <string>0.0.0.0</string>
+        <key>MEMOBASE_API_KEY</key>
+        <string>momo_secret_for_memobase</string>
+        <key>MEMOBASE_BASE_URL</key>
+        <string>http://192.168.100.246:8019</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/mac/hotProject/Hermes/memobase/logs/clawra-mcp.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/mac/hotProject/Hermes/memobase/logs/clawra-mcp.log</string>
+</dict>
+</plist>

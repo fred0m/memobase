@@ -1,3 +1,19 @@
+"""
+克拉拉专属 Memobase MCP — 独立记忆空间（user_id = string_to_uuid("clawra")）。
+
+与 Hermes 版（DEFAULT_USER_ID = string_to_uuid("user")）完全隔离：
+- 克拉拉存/查的记忆只属于她自己
+- 沫沫的画像（Hermes 维护）不会被克拉拉看到或污染
+
+用法（streamable-http）：
+    TRANSPORT=streamable-http PORT=8051 MEMOBASE_API_KEY=... MEMOBASE_BASE_URL=... \
+        python clawra_main.py
+
+供 OpenClaw（M4）通过 mcp add 远程连接：
+    openclaw mcp add memobase-clawra --transport streamable-http \
+        --url http://192.168.100.166:8051/mcp
+"""
+
 from mcp.server.fastmcp import FastMCP, Context
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
@@ -13,11 +29,10 @@ from utils import get_memobase_client
 
 load_dotenv()
 
-# Default user ID for memory operations
-DEFAULT_USER_ID = string_to_uuid("user")
+# 克拉拉专属用户 ID（与 Hermes 的 "user" 完全隔离）
+DEFAULT_USER_ID = string_to_uuid("clawra")
 
 
-# Create a dataclass for our application context
 @dataclass
 class MemobaseContext:
     """Context for the Memobase MCP server."""
@@ -27,32 +42,20 @@ class MemobaseContext:
 
 @asynccontextmanager
 async def memobase_lifespan(server: FastMCP) -> AsyncIterator[MemobaseContext]:
-    """
-    Manages the Memobase client lifecycle.
-
-    Args:
-        server: The FastMCP server instance
-
-    Yields:
-        MemobaseContext: The context containing the Memobase client
-    """
-    # Create and return the Memory client with the helper function in utils.py
     memobase_client = get_memobase_client()
     assert await memobase_client.ping(), "Failed to connect to Memobase"
-    print("Memobase client connected")
+    print("Clawra Memobase client connected")
     try:
         yield MemobaseContext(memobase_client=memobase_client)
     finally:
-        # No explicit cleanup needed for the Memobase client
         pass
 
 
-# Initialize FastMCP server with the Memobase client as context
 mcp = FastMCP(
-    "memobase-mcp",
+    "memobase-clawra",
     lifespan=memobase_lifespan,
     host=os.getenv("HOST", "0.0.0.0"),
-    port=int(os.getenv("PORT", 8050)),
+    port=int(os.getenv("PORT", 8051)),
 )
 
 
@@ -75,6 +78,7 @@ async def save_memory(ctx: Context, text: str) -> str:
         u = await memobase_client.get_or_create_user(DEFAULT_USER_ID)
         await u.insert(ChatBlob(messages=messages))
         await u.flush()
+        print(f"[clawra] saved memory blob")
         return f"Successfully saved memory: {text[:100]}..."
     except Exception as e:
         return f"Error saving memory: {str(e)}"
@@ -85,12 +89,6 @@ async def get_user_profiles(ctx: Context) -> str:
     """Get full user profiles.
 
     Call this tool when user asks for a summary of complete image of itself.
-
-    Args:
-        ctx: The MCP server provided context which includes the Memobase client
-
-    Returns:
-        A list of user profiles with topic, subtopic and content.
     """
     try:
         memobase_client: AsyncMemoBaseClient = (
@@ -98,13 +96,17 @@ async def get_user_profiles(ctx: Context) -> str:
         )
         u = await memobase_client.get_or_create_user(DEFAULT_USER_ID)
         ps = await u.profile()
-        return "\n".join([f"- {p.describe}" for p in ps])
+        return json.dumps(ps, ensure_ascii=False, default=str)
     except Exception as e:
-        return f"Error retrieving memories: {str(e)}"
+        return f"Error getting profiles: {str(e)}"
 
 
 @mcp.tool()
-async def search_memories(ctx: Context, query: str, max_length: int = 1000) -> str:
+async def search_memories(
+    ctx: Context,
+    query: str,
+    max_length: int = 1000,
+) -> str:
     """Search user memories
 
     Call this tool when user ask for recall some personal information.
@@ -127,15 +129,16 @@ async def search_memories(ctx: Context, query: str, max_length: int = 1000) -> s
         return f"Error searching memories: {str(e)}"
 
 
-async def main():
-    transport = os.getenv("TRANSPORT", "sse")
-    if transport == "sse":
-        # Run the MCP server with sse transport
-        await mcp.run_sse_async()
+def main():
+    transport = os.getenv("TRANSPORT", "streamable-http")
+    if transport == "streamable-http":
+        # mcp.run() 是同步方法（内部自己 anyio.run），不能在 asyncio 循环里调用
+        mcp.run(transport="streamable-http")
+    elif transport == "sse":
+        asyncio.run(mcp.run_sse_async())
     else:
-        # Run the MCP server with stdio transport
-        await mcp.run_stdio_async()
+        asyncio.run(mcp.run_stdio_async())
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

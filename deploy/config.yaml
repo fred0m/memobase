@@ -1,0 +1,49 @@
+llm_api_key: "momo_secret"
+llm_base_url: "http://192.168.100.196:8080/v1"
+best_llm_model: "Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf"
+
+# 单用户场景，关闭事件 embedding 和 event summary
+enable_event_embedding: false
+enable_event_summary: false
+
+# 中文语言
+language: zh
+
+# 自定义用户画像维度
+overwrite_user_profiles:
+  - topic: "basic_info"
+    description: "用户基本资料"
+    sub_topics:
+      - name: "name"
+        description: "用户的名称或昵称"
+      - name: "age"
+      - name: "gender"
+      - name: "occupation"
+        description: "用户的工作或专业"
+      - name: "location"
+      - name: "languages"
+        description: "用户使用的语言"
+      - name: "timezone"
+        description: "用户所在时区"
+  
+  - topic: "interest"
+    description: "用户的兴趣和偏好"
+    sub_topics:
+      - name: "tech_interests"
+        description: "技术方面的兴趣方向"
+      - name: "crypto"
+        description: "加密货币相关偏好（BTC, ETH, AAVE 等）"
+      - name: "ai_topics"
+        description: "AI 工具和模型的偏好"
+      - name: "hobbies"
+        description: "其他兴趣爱好"
+  
+  - topic: "psychological"
+    description: "用户的心理特征和状态"
+    sub_topics:
+      - name: "goals"
+        description: "用户的目标和愿望"
+      - name: "personality_traits"
+        description: "性格特点描述"
+      - name: "preferences"
+        description: "对 AI 互动的偏好（风格、语气等）"
