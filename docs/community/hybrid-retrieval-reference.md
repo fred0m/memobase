@@ -31,7 +31,11 @@ Practical implementation notes:
 - Tokenize mixed Chinese/English text as **CJK unigram+bigram per contiguous
   chunk** plus latin words (strip trailing `._-`), no dictionary needed.
 - Cache the full event list locally (e.g. TTL 5 min) instead of indexing per
-  query; fetch it from `GET /users/event/{user_id}?topk=1000`.
+  query; fetch it from `GET /users/event/{user_id}?topk=1000`. For larger
+  corpora, keep the BM25 index in a persistent store and rebuild it
+  incrementally — the fusion step is unaffected by corpus size, and the
+  reranker pass always runs on a fixed candidate count (e.g. 15), so recall
+  cost stays flat as events grow.
 - Fetch the event list **outside** the cache lock; on fetch failure back off
   briefly instead of retrying every call.
 
