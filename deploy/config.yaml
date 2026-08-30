@@ -2,7 +2,7 @@ llm_api_key: "sk-5ea79120836aa582-lxsk46-fd59ea69"
 llm_base_url: "http://9router.momo/v1"
 best_llm_model: "memobase-use"
 
-# 单用户场景，关闭事件 embedding
+# 单用户场景，开启事件 embedding（支持日概要与事件语义检索）
 enable_event_embedding: true
 # 事件 embedding：硅基流动 Qwen3-Embedding-4B（MRL 截 1536 匹配 vector(1536) 列）
 embedding_dim: 1536

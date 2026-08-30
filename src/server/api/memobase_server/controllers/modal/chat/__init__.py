@@ -20,6 +20,9 @@ from .types import MergeAddResult
 from .event_summary import tag_event
 from .entry_summary import entry_chat_summary
 
+# 后台任务强引用集合：防止 asyncio.create_task 的 Task 在长 I/O 期间被 GC 回收（P2-1）
+_BACKGROUND_TASKS: set[asyncio.Task] = set()
+
 
 def truncate_chat_blobs(
     blobs: list[Blob], max_token_size: int
@@ -250,9 +253,11 @@ async def handle_session_event(
 
     if eid.ok():
         today_str = datetime.now().strftime("%Y-%m-%d")
-        asyncio.create_task(
+        task = asyncio.create_task(
             _bg_rebuild_user_summary(user_id, project_id, today_str)
         )
+        _BACKGROUND_TASKS.add(task)
+        task.add_done_callback(_BACKGROUND_TASKS.discard)
 
     return eid
 
