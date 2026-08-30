@@ -348,3 +348,73 @@ class UsageResponse(BaseResponse):
     data: Optional[list[DailyUsage]] = Field(
         None, description="Response containing the daily usage"
     )
+
+
+class UserSummaryData(BaseModel):
+    id: UUID = Field(..., description="The summary unique identifier")
+    user_id: Optional[UUID] = Field(None, description="User identifier")
+    project_id: Optional[str] = Field(None, description="Project identifier")
+    summary_date: str = Field(..., description="Summary date (YYYY-MM-DD)")
+    kind: str = Field("daily", description="Summary kind: daily|weekly|monthly")
+    content: str = Field(..., description="Summary text content")
+    event_ids: list[str] = Field(
+        default_factory=list, description="List of source event ids"
+    )
+    created_at: Optional[datetime] = Field(
+        None, description="Timestamp when the summary was created"
+    )
+    updated_at: Optional[datetime] = Field(
+        None, description="Timestamp when the summary was last updated"
+    )
+    similarity: Optional[float] = Field(
+        None, description="Similarity score when searched"
+    )
+
+
+class UserSummariesData(BaseModel):
+    summaries: list[UserSummaryData] = Field(
+        ..., description="List of user summaries"
+    )
+
+
+class UserSummaryUpsertData(BaseModel):
+    summary_date: str = Field(..., description="Summary date (YYYY-MM-DD)")
+    kind: str = Field("daily", description="Summary kind: daily|weekly|monthly")
+    content: str = Field(..., description="Summary text content")
+    event_ids: Optional[list[str]] = Field(
+        default_factory=list, description="Source event ids"
+    )
+
+
+class RebuildSummaryRequest(BaseModel):
+    date: str = Field(..., description="Summary date to rebuild (YYYY-MM-DD)")
+    kind: str = Field("daily", description="Summary kind: daily|weekly|monthly")
+    style: str = Field("concat", description="Rebuild style: concat|llm")
+
+
+class RebuildSummaryData(BaseModel):
+    event_count: int = Field(..., description="Number of events included")
+    summary_id: Optional[UUID] = Field(
+        None, description="Summary UUID if created/updated"
+    )
+    summary_date: str = Field(..., description="Summary date (YYYY-MM-DD)")
+    kind: str = Field("daily", description="Summary kind")
+
+
+class UserSummaryResponse(BaseResponse):
+    data: Optional[UserSummaryData] = Field(
+        None, description="Response containing a single user summary"
+    )
+
+
+class UserSummariesDataResponse(BaseResponse):
+    data: Optional[UserSummariesData] = Field(
+        None, description="Response containing user summaries"
+    )
+
+
+class RebuildSummaryResponse(BaseResponse):
+    data: Optional[RebuildSummaryData] = Field(
+        None, description="Response containing rebuild summary result"
+    )
+

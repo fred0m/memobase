@@ -272,6 +272,27 @@ router.get(
 
 
 router.post(
+    "/users/summary/{user_id}",
+    tags=["summary"],
+)(api_layer.summary.upsert_user_summary)
+
+router.get(
+    "/users/summary/{user_id}",
+    tags=["summary"],
+)(api_layer.summary.get_user_summaries)
+
+router.get(
+    "/users/summary/search/{user_id}",
+    tags=["summary"],
+)(api_layer.summary.search_user_summaries)
+
+router.post(
+    "/users/summary/{user_id}/rebuild",
+    tags=["summary"],
+)(api_layer.summary.rebuild_user_summary)
+
+
+router.post(
     "/users/roleplay/proactive/{user_id}",
     tags=["roleplay"],
     # openapi_extra=API_X_CODE_DOCS["POST /users/roleplay/proactive/{user_id}"],

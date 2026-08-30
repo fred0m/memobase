@@ -13,11 +13,12 @@ from memobase_server.models.database import (
     GeneralBlob,
     BufferZone,
     UserProfile,
+    UserSummary,
 )
 
 
 print("--", f"Synced from backend {__version__}")
-for db in [User, GeneralBlob, BufferZone, UserProfile]:
+for db in [User, GeneralBlob, BufferZone, UserProfile, UserSummary]:
     table_obj = db if isinstance(db, Table) else db.__table__
     # Print table creation
     print(str(CreateTable(table_obj).compile(DB_ENGINE)).strip() + ";")

@@ -1,10 +1,14 @@
-llm_api_key: "momo_secret"
-llm_base_url: "http://192.168.100.196:8080/v1"
-best_llm_model: "Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf"
+llm_api_key: "sk-5ea79120836aa582-lxsk46-fd59ea69"
+llm_base_url: "http://9router.momo/v1"
+best_llm_model: "memobase-use"
 
-# 单用户场景，关闭事件 embedding 和 event summary
-enable_event_embedding: false
-enable_event_summary: false
+# 单用户场景，关闭事件 embedding
+enable_event_embedding: true
+# 事件 embedding：硅基流动 Qwen3-Embedding-4B（MRL 截 1536 匹配 vector(1536) 列）
+embedding_dim: 1536
+embedding_model: "Qwen/Qwen3-Embedding-4B"
+embedding_base_url: "https://api.siliconflow.cn/v1"
+embedding_api_key: "sk-cjymqntpgfqboimbjlbhslhpgvvwrwpcgsxrlgsxadsarbrf"
 
 # 中文语言
 language: zh
@@ -31,8 +35,6 @@ overwrite_user_profiles:
     sub_topics:
       - name: "tech_interests"
         description: "技术方面的兴趣方向"
-      - name: "crypto"
-        description: "加密货币相关偏好（BTC, ETH, AAVE 等）"
       - name: "ai_topics"
         description: "AI 工具和模型的偏好"
       - name: "hobbies"

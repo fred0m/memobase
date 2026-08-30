@@ -1,7 +1,7 @@
 import os
 import uuid
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date
 from sqlalchemy import (
     text,
     VARCHAR,
@@ -13,6 +13,8 @@ from sqlalchemy import (
     Column,
     Index,
     Boolean,
+    Date,
+    UniqueConstraint,
     PrimaryKeyConstraint,
     ForeignKeyConstraint,
 )
@@ -259,6 +261,9 @@ class User(Base):
     )
     related_user_statuses: Mapped[list["UserStatus"]] = relationship(
         "UserStatus", back_populates="user", cascade="all, delete-orphan", init=False
+    )
+    related_user_summaries: Mapped[list["UserSummary"]] = relationship(
+        "UserSummary", back_populates="user", cascade="all, delete-orphan", init=False
     )
 
     # Default columns
@@ -626,6 +631,87 @@ class UserStatus(Base):
             onupdate="CASCADE",
         ),
     )
+
+
+@REG.mapped_as_dataclass
+class UserSummary(Base):
+    __tablename__ = "user_summaries"
+
+    # Specific columns
+    user_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        nullable=False,
+    )
+    summary_date: Mapped[date] = mapped_column(
+        Date,
+        nullable=False,
+    )
+    kind: Mapped[str] = mapped_column(
+        VARCHAR(8),
+        nullable=False,
+        default="daily",
+    )
+    content: Mapped[str] = mapped_column(
+        TEXT,
+        nullable=False,
+    )
+    event_ids: Mapped[list] = mapped_column(
+        JSONB,
+        nullable=False,
+        default_factory=list,
+    )
+
+    # Default columns
+    project_id: Mapped[str] = mapped_column(
+        VARCHAR(64),
+        default=DEFAULT_PROJECT_ID,
+    )
+
+    user: Mapped[User] = relationship(
+        "User",
+        back_populates="related_user_summaries",
+        init=False,
+        foreign_keys=[user_id, project_id],
+    )
+
+    embedding: Mapped[Vector] = mapped_column(
+        Vector(dim=CONFIG.embedding_dim), nullable=True, default=None
+    )
+
+    __table_args__ = (
+        PrimaryKeyConstraint("id", "project_id"),
+        UniqueConstraint(
+            "user_id",
+            "project_id",
+            "summary_date",
+            "kind",
+            name="uq_user_summaries_user_project_date_kind",
+        ),
+        Index("idx_user_summaries_user_id_project_id", "user_id", "project_id"),
+        Index(
+            "idx_user_summaries_user_id_project_id_date",
+            "user_id",
+            "project_id",
+            "summary_date",
+        ),
+        Index(
+            "idx_user_summaries_user_id_project_id_kind",
+            "user_id",
+            "project_id",
+            "kind",
+        ),
+        ForeignKeyConstraint(
+            ["user_id", "project_id"],
+            ["users.id", "users.project_id"],
+            ondelete="CASCADE",
+            onupdate="CASCADE",
+        ),
+    )
+
+    @classmethod
+    def check_legal_embedding_dim(cls, session):
+        check_legal_embedding_dim(cls, session)
+        LOG.info("UserSummary embedding dimension checked")
 
 
 # Modify event listeners to allow root project initialization

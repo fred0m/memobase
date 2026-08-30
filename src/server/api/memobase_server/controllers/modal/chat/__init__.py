@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from ...project import get_project_profile_config
 from ....connectors import Session
 from ....env import ProfileConfig, CONFIG, TRACE_LOG
@@ -201,6 +202,33 @@ async def process_event_res(
     return Promise.resolve(event_tags)
 
 
+async def _bg_rebuild_user_summary(
+    user_id: str, project_id: str, today_str: str
+) -> None:
+    try:
+        from ...summary import rebuild_user_summary
+
+        res = await rebuild_user_summary(
+            user_id=user_id,
+            project_id=project_id,
+            target_date=today_str,
+            kind="daily",
+            style="concat",
+        )
+        if not res.ok():
+            TRACE_LOG.warning(
+                project_id,
+                user_id,
+                f"Background daily summary rebuild returned non-ok: {res.msg()}",
+            )
+    except Exception as e:
+        TRACE_LOG.error(
+            project_id,
+            user_id,
+            f"Background daily summary rebuild exception: {e}",
+        )
+
+
 async def handle_session_event(
     user_id: str,
     project_id: str,
@@ -219,6 +247,12 @@ async def handle_session_event(
             "profile_delta": delta_profile_data,
         },
     )
+
+    if eid.ok():
+        today_str = datetime.now().strftime("%Y-%m-%d")
+        asyncio.create_task(
+            _bg_rebuild_user_summary(user_id, project_id, today_str)
+        )
 
     return eid
 
