@@ -649,7 +649,6 @@ class UserSummary(Base):
     kind: Mapped[str] = mapped_column(
         VARCHAR(8),
         nullable=False,
-        default="daily",
     )
     content: Mapped[str] = mapped_column(
         TEXT,
