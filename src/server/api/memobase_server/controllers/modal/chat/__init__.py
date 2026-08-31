@@ -216,7 +216,7 @@ async def _bg_rebuild_user_summary(
             project_id=project_id,
             target_date=today_str,
             kind="daily",
-            style="concat",
+            style="llm",
         )
         if not res.ok():
             TRACE_LOG.warning(
