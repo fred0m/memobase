@@ -1,0 +1,81 @@
+{
+  "exported_at": "2026-09-10T19:10:32.193407",
+  "orphan_user": {
+    "profiles": {
+      "profiles": [
+        {
+          "id": "4e469693-ade3-4186-9f24-b0d69ad2f155",
+          "content": "沫沫",
+          "created_at": "2026-07-23T11:17:49.798638Z",
+          "updated_at": "2026-07-23T11:17:49.798638Z",
+          "attributes": {
+            "topic": "basic_info",
+            "sub_topic": "name"
+          }
+        },
+        {
+          "id": "fdc91aa1-6de8-461d-bb71-a9ed8e43f633",
+          "content": "加密货币交易员",
+          "created_at": "2026-07-23T11:17:49.798638Z",
+          "updated_at": "2026-07-23T11:17:49.798638Z",
+          "attributes": {
+            "topic": "basic_info",
+            "sub_topic": "occupation"
+          }
+        },
+        {
+          "id": "3c872e2d-241c-4eee-a581-4916a786938f",
+          "content": "关注BTC和ETH",
+          "created_at": "2026-07-23T11:17:49.798638Z",
+          "updated_at": "2026-07-23T11:17:49.798638Z",
+          "attributes": {
+            "topic": "interest",
+            "sub_topic": "crypto"
+          }
+        },
+        {
+          "id": "7a92595c-45f0-4836-a01c-bb47d7f12c91",
+          "content": "喜欢喝抹茶拿铁",
+          "created_at": "2026-07-23T11:17:49.798638Z",
+          "updated_at": "2026-07-23T11:17:49.798638Z",
+          "attributes": {
+            "topic": "interest",
+            "sub_topic": "hobbies"
+          }
+        }
+      ]
+    },
+    "events": {
+      "events": [],
+      "gists": []
+    }
+  },
+  "empty_users": [
+    "6780d909-ad47-4ac3-b96b-a44fec4bf66b",
+    "d26cb61f-b47f-4f51-a6a4-9d2a2375000a",
+    "a965e782-f168-457c-8cd0-7352dd75c176"
+  ],
+  "target_profiles_before": [
+    {
+      "id": "20ff07cc-5426-4f14-8cda-a3ddf7311905",
+      "content": "",
+      "created_at": "2026-08-19T10:28:56.352819Z",
+      "updated_at": "2026-09-05T12:12:33.226467Z",
+      "attributes": {
+        "topic": "basic_info",
+        "sub_topic": "family_member",
+        "update_hits": 2
+      }
+    },
+    {
+      "id": "de8cee4b-9c4a-4950-8563-af1df789cfb7",
+      "content": "中文",
+      "created_at": "2026-07-23T11:39:15.439834Z",
+      "updated_at": "2026-07-23T11:39:15.439834Z",
+      "attributes": {
+        "topic": "basic_info",
+        "sub_topic": "languages"
+      }
+    }
+  ]
+}

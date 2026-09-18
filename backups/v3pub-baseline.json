@@ -1,0 +1,12 @@
+{
+  "时间": "2026-09-16 10:33:09 CST",
+  "插件仓_分支": "feature/summary-layer-v4",
+  "插件仓_HEAD": "44bd75ab5fa9ba64388134aa7fc07934ee66a231",
+  "工作树是否脏": "(干净)",
+  "文件哈希": "06583b3818e5bd87da0e9beb2732e7b2febd961585a96c4ade2d33a145ee9908  __init__.py\n63b0a1f45a873224ba9a5d20e1aa81ae91bceae3d9f92d5c87c7ab2f981f1761  hybrid_retriever.py\n04af43a173a454078c2cfaaf62fbed18a2a9a4fe983afb09fd6e2c93cb2107b9  plugin.yaml\n0920aa4e5f04805b16b767be3561ff4e11829aebc6a8b8d26aa65e1602d0c442  README.md",
+  "memobase_json哈希": "1f36574acc7845cc833776486914bfab792d3446ad84330351defb04ef32d3fc  /Users/mac/.hermes/memobase.json",
+  "memobase_json内容": "{\n  \"summary_enabled\": true,\n  \"summary_budget_tokens\": 1200,\n  \"summary_single_day_budget\": 1500,\n  \"event_budget_tokens\": 900,\n  \"summary_topk\": 7,\n  \"summary_semantic_topk\": 3,\n  \"prefetch_max_tokens\": 3000\n}",
+  "memory_status": "Memory status\n────────────────────────────────────────\n  Built-in (MEMORY.md / USER.md):\n    Memory injection:   enabled ✓\n    User profile:       enabled ✓\n    Memory tool:        enabled ✓\n  Provider:  memobase\n\n  Plugin:    installed ✓\n  Status:    available ✓",
+  "recall_label现值": "1018:        return RecallStatus(provider_label=\"小爱正在回忆\", count=0, glyph=\"💭\")",
+  "cjk_known现值": "168:_CJK_KNOWN = [\n169-    \"图图\", \"沫沫\", \"小爱\", \"爱音\", \"克拉拉\", \"岁岁\", \"潜潜\", \"纪纪\", \"灯灯\",\n170-]\n--\n214:    for name in _CJK_KNOWN:"
+}
