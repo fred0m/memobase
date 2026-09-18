@@ -75,7 +75,7 @@ THOUGHT
 Where:
 - `THOUGHT` is your reasoning process
 - Separate reasoning and action with `---`
-- Output action must be one of APPEND/UPDATE/ABORT, formatted strictly as `N. ACTION{tab}CONTENT`, and any other prefix is forbidden
+- Output action must be one of APPEND/UPDATE/ABORT, formatted strictly as `N. <ACTION>{tab}CONTENT` (i.e. `N. APPEND{tab}...`, `N. UPDATE{tab}...`, `N. ABORT{tab}...`), and any other prefix is forbidden
 
 ## Examples
 ### Input Example
