@@ -340,3 +340,6 @@ config.json
 inbox/
 outbox/
 processed/
+
+# agent 隔离工作树（不入库）
+.worktrees/
