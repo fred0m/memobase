@@ -204,3 +204,56 @@ docker run -d --name memobase-server --env-file /home/momo/memobase/memobase.env
 | `memobase/upstream-issue-draft.md` | 上游 issue 草稿（已发为 #166） |
 | `~/.hermes/scripts/memobase_merge_watch.py` | 验收 D 巡检脚本 |
 | `~/.hermes/backups/memobase-merge-fix-20260918-144444/` | 改动前备份（worktree 打包 + 4 个 .orig） |
+
+---
+
+## 十一、补充：thinking_llm_model 死配置修正（2026-09-18 晚）
+
+**发现**：容器启动日志里 `thinking_llm_model='o4-mini'` —— 一个 OpenAI 模型名，但 `llm_base_url` 指向本地。
+
+**排查**：它只被 `controllers/modal/roleplay/predict_new_topics.py` 使用（角色主动话题预测），我们完全不用该功能（48h 内 roleplay 日志 0 条）。且 `config.yaml` 里**根本没有这一行**——用的是源码默认值（`env.py:101`）。
+
+**为什么要改**：虽然当前不触发，但这是隐患——万一用到 roleplay，会拿 `o4-mini` 去本地找模型 → 报错；而 `llm_base_url` 指向本地意味着**它不会偷偷发到 OpenAI**（这点是好消息）。
+
+**改动**：`config.yaml` 显式加一行（+注释），指向本地模型：
+```yaml
+thinking_llm_model: "Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf"
+```
+备份：`backups/config.yaml.bak-thinking-20260918-195358`
+
+**验证**：重启后启动日志确认 `thinking_llm_model='Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf'`。
+
+---
+
+## 十二、完整模型通道清单（2026-09-18 实查）
+
+### LLM 侧：全部本地 ✅
+
+从**真实调用日志**反推，memobase 实际会跑 LLM 的任务共 5 个，全部走本地 Coder：
+
+| 任务 | 作用 | 24h 调用数 |
+|---|---|---|
+| `zh_extract_profile` | 画像提取（从对话提取事实） | 8 |
+| `zh_merge_profile_yolo` | 画像合并 | 8 |
+| `zh_summary_entry_chats` | **每轮对话的事件摘要** | 9 |
+| `summary_profile` | 概要层（日概要蒸馏） | 3 |
+| `__test__` | 启动自检 | 1 |
+| ~~`thinking_llm_model`（roleplay）~~ | 主动话题预测 | 0（未使用） |
+
+### 非 LLM 侧：仍走云端
+
+| 通道 | 服务 | 说明 |
+|---|---|---|
+| Embedding | 硅基流动 `Qwen/Qwen3-Embedding-4B` | M1 Pro 未部署 embedding 模型；换模型要重建全部向量（dim=1536 绑死 DB 列） |
+| Rerank | 硅基流动 `Qwen/Qwen3-Reranker-4B` | 条件触发（低区分度才用） |
+
+**隐私评估**：LLM 侧（会拿到完整对话内容做提取）已本地化；embedding/rerank 只传查询文本 + 待索引片段，敏感度较低。
+
+### 修复效果的实时佐证
+
+重启后（2026-09-18 19:54）观察到的生产日志：
+```
+Adding 1, updating 1, deleting 0 profiles     ← updating 1 是修复前几乎见不到的
+No Corresponding Merge Action: 0
+MERGE_YOLO_ZERO_ACTIONS: 0
+```
